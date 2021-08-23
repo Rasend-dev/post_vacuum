@@ -30,31 +30,19 @@ class iHateInstagram(unittest.TestCase):
                 driver.execute_script("window.scrollTo(0, window.scrollY + 770);")
                 time.sleep(sec)
 
-        def scrape(rows=3):
+        def scrape_init(rows=3,state = 0):
             posts = {}
             for i in range(rows):
                 for y in range(3):
                     # here we set up a action chain for the mouseover event
                     action = ActionChains(driver) #We have to initiate a new instance of ActionChains every time that we want to pass over the element without a pause
-                    link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1}]/div[{y + 1}]/a')
+                    link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
                     action.move_to_element(link).perform()
-                    n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
-                    n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
+                    n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
+                    n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
                     posts[link.get_attribute('href')] = {'n_likes': n_likes, 'n_comments': n_comments}    
 
             return posts        
-
-        def execute(times):
-            data= []
-            for i in range(times):
-                scroll_down(1,sec=2)
-                info = scrape()
-                data.append(info)
-                if i == times - 1:
-                    info = scrape(rows=2)
-                    data.append(info)
-
-            return data
 
         #esperamos a que cargue el boton
         WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//form[@id="loginForm"]//input[@name="username"]')))
@@ -93,7 +81,11 @@ class iHateInstagram(unittest.TestCase):
         n_posts = int(followers[0][:2])
 
         print(followers)
-        print(scrape(rows=10))
+        print(scrape_init(rows=10))
+        scroll_down(1)
+        print(scrape_init(rows=3,state=8))
+        scroll_down(1)
+        print(scrape_init(rows=1,state=9))
 
     def tearDown(self):
         self.driver.quit()    
