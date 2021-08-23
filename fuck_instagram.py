@@ -10,7 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 URL_TARGET = 'https://www.instagram.com/importiz_sc/'
-USERNAME = 'username_no_generico'
+USERNAME = 'talejandroest'
 PASS = '32146456q'
 
 class iHateInstagram(unittest.TestCase):
