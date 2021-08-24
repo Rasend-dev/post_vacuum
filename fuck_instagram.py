@@ -1,12 +1,13 @@
 import unittest
 import time
+import os
+from function import Um
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 #This module will help us to move the mouse over the posts to get the number of comments and likes
 from selenium.webdriver.common.action_chains import ActionChains
-
 
 URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 URL_TARGET = 'https://www.instagram.com/importiz_sc/'
@@ -23,6 +24,7 @@ class iHateInstagram(unittest.TestCase):
 
     def test_instagram(self):
         driver = self.driver 
+        useful = Um()
 
         def scroll_down(times,sec=1):
             for i in range(times):
@@ -91,4 +93,6 @@ class iHateInstagram(unittest.TestCase):
         self.driver.quit()    
 
 if __name__ == "__main__":
+    useful = Um()
+    useful.create_csv('Instagram.csv',os.getcwd())
     unittest.main(verbosity =2)
