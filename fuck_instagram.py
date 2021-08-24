@@ -13,6 +13,8 @@ URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 URL_TARGET = 'https://www.instagram.com/importiz_sc/'
 USERNAME = 'talejandroest'
 PASS = '32146456q'
+WDIR = os.getcwd()
+CSV_FILE = 'Instagram.csv'
 
 class iHateInstagram(unittest.TestCase):
 
@@ -33,7 +35,6 @@ class iHateInstagram(unittest.TestCase):
                 time.sleep(sec)
 
         def scrape_init(rows=3,state = 0):
-            posts = {}
             for i in range(rows):
                 for y in range(3):
                     # here we set up a action chain for the mouseover event
@@ -42,19 +43,17 @@ class iHateInstagram(unittest.TestCase):
                     action.move_to_element(link).perform()
                     n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
                     n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
-                    posts[link.get_attribute('href')] = {'n_likes': n_likes, 'n_comments': n_comments}    
+                    useful.write_csv(CSV_FILE,WDIR,[link.get_attribute('href'),n_likes,n_comments])       
 
-            return posts        
-
-        #esperamos a que cargue el boton
+        #Wait to the button
         WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//form[@id="loginForm"]//input[@name="username"]')))
         
-        #encontramos los elementos para llenar el formulario
+        #Find the elements of forms
         username = driver.find_element_by_xpath('//form[@id="loginForm"]//input[@name="username"]')
         password = driver.find_element_by_xpath('//form[@id="loginForm"]//input[@name="password"]')
         login_btn = driver.find_element_by_xpath('//form[@id="loginForm"]/div/div/button[@type="submit"]')
 
-        #Verificamos si el formulario esta disponible 
+        #Check if the elements form exits
         self.assertTrue(username and password and login_btn)
         username.click()
         username.clear()
@@ -66,15 +65,15 @@ class iHateInstagram(unittest.TestCase):
 
         login_btn.click()
         
-        #No nos movemos hasta que cargue por lo menos el elemento de la barra de busqueda
+        #Check if the search bar exits
         WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//nav//div/input[@placeholder="Search"]')))
 
-        #Nos movemos al perfil que queremos scrapear
+        #Go to the target link
         driver.get(URL_TARGET)
 
         followers = []
 
-        #Encontramos el Numero de posts, los que te siguen y a los que sigues
+        #Find the first data of the account
         for i in range(3):
             info = driver.find_element_by_xpath(f'//header/section/ul/li[{i + 1}]//span').text
             followers.append(info)
@@ -83,11 +82,11 @@ class iHateInstagram(unittest.TestCase):
         n_posts = int(followers[0][:2])
 
         print(followers)
-        print(scrape_init(rows=10))
+        scrape_init(rows=10)
         scroll_down(1)
-        print(scrape_init(rows=3,state=8))
+        scrape_init(rows=3,state=8)
         scroll_down(1)
-        print(scrape_init(rows=1,state=9))
+        scrape_init(rows=1,state=9)
 
     def tearDown(self):
         self.driver.quit()    

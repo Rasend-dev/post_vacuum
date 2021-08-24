@@ -25,6 +25,7 @@ class Um():
         Method that write the data in the csv file
         where path is path of the working directory | dtype is <str> | try using os.getcwd() to get the path
         and fname is the filanme | dtype is <str>
+        and data is an array that contains the data we wanna write | dtype is <list>
         """
         with open(os.path.join(path,fname), 'a',newline='') as outfile:
             writer = csv.writer(outfile)
