@@ -8,7 +8,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 #This module will help us to move the mouse over the posts to get the number of comments and likes
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException
 
+#'https://www.instagram.com/importiz_sc/'
+#'https://www.instagram.com/marvel/'
 URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 URL_TARGET = 'https://www.instagram.com/importiz_sc/'
 USERNAME = 'talejandroest'
@@ -37,12 +40,17 @@ class iHateInstagram(unittest.TestCase):
             for i in range(rows):
                 for y in range(3):
                     # here we set up a action chain for the mouseover event
-                    action = ActionChains(driver) #We have to initiate a new instance of ActionChains every time that we want to pass over the element without a pause
-                    link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
-                    action.move_to_element(link).perform()
-                    n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
-                    n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
-                    useful.write_csv(fname,WDIR,[link.get_attribute('href'),n_likes,n_comments])       
+                    try:
+                        action = ActionChains(driver) #We have to initiate a new instance of ActionChains every time that we want to pass over the element without a pause
+                        link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
+                        action.move_to_element(link).perform()
+                        n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
+                        n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
+                        useful.write_csv(fname,WDIR,[link.get_attribute('href'),n_likes,n_comments])
+                    except NoSuchElementException:
+                        print("Whops! there are no post available to scrape")
+                        break       
+
 
         #Wait to the button
         WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//form[@id="loginForm"]//input[@name="username"]')))
@@ -79,8 +87,8 @@ class iHateInstagram(unittest.TestCase):
             info = driver.find_element_by_xpath(f'//header/section/ul/li[{i + 1}]//span').text
             followers.append(info)
 
-        #Here we get the n of posts
-        n_posts = int(followers[0][:2])
+
+        #here we create the csv file of the account itself
         useful.create_csv(account_name,os.getcwd())
 
         print(followers)
@@ -88,12 +96,11 @@ class iHateInstagram(unittest.TestCase):
         scroll_down(1)
         scrape_init(rows=3,state=8,fname=account_name)
         scroll_down(1)
-        scrape_init(rows=1,state=9,fname=account_name)
+        scrape_init(rows=2,state=9,fname=account_name)
 
 
     def tearDown(self):
         self.driver.quit()    
 
 if __name__ == "__main__":
-    useful = Um()
     unittest.main(verbosity =2)
