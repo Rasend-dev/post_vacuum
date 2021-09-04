@@ -11,8 +11,9 @@ from selenium.webdriver.common.action_chains import ActionChains
 #Exceptions
 from selenium.common.exceptions import NoSuchElementException
 
-#'https://www.instagram.com/importiz_sc/'
 #'https://www.instagram.com/marvel/'
+#'https://www.instagram.com/importiz_sc/'
+
 URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 URL_TARGET = 'https://www.instagram.com/importiz_sc/'
 USERNAME = 'talejandroest'
@@ -102,10 +103,11 @@ class iHateInstagram(unittest.TestCase):
             followers.append(info)
 
 
-        #here we create the csv file of the account itself
+        #here we create the csv and the json files of the account itself
         useful.create_csv(account_name,os.getcwd())
         useful.create_json(account_name,os.getcwd())
 
+        #execute the code
         print(followers)
         scrape_init(rows=10,fname=account_name)
         scroll_down(1)
