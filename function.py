@@ -43,8 +43,8 @@ class Um():
         where path is path of the working directory | dtype is <str> | try using os.getcwd() to get the path
         and fname is the filanme | dtype is <str>
         """  
-        dictionary ={} 
-        fname = fname + '_' + CURRENT_DATE + 'json'
+        dictionary ={'post_details':[]} 
+        fname = fname + '_' + CURRENT_DATE + '.json'
         if not fname in os.listdir(path):
             with open(os.path.join(path,fname), "w") as outfile:
                 json.dump(dictionary, outfile)
@@ -53,16 +53,16 @@ class Um():
                 json.dump(dictionary,outfile)
  
 
-    def write_json(self,fname,path,data): #TODO: create a function that writes in a json file
+    def write_json(self,fname,path,info): 
         """
         Method that write the data in the json file
         where path is path of the working directory | dtype is <str> | try using os.getcwd() to get the path
         and fname is the filanme | dtype is <str>
-        and data is an dictionary that contains the data we wanna write | dtype is <dict>
+        and info is an dictionary that contains the data we wanna write | dtype is <dict>
         """
-        fname = fname + '_' + CURRENT_DATE + 'json'
-        with open(os.path.join(path,fname), 'a') as f:
+        fname = fname + '_' + CURRENT_DATE + '.json'
+        with open(os.path.join(path,fname), 'r+') as f:
             data = json.load(f)
-            data.update(data)
+            data['post_details'].append(info)
             f.seek(0)
             json.dump(data,f)
