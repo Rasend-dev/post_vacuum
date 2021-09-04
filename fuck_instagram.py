@@ -63,7 +63,7 @@ class iHateInstagram(unittest.TestCase):
                         useful.write_csv(fname,WDIR,[link.get_attribute('href'),n_likes,n_comments])
                         useful.write_json(fname,WDIR,{'link':link.get_attribute('href'),'n_likes':n_likes,'n_comments':n_comments})
                     except NoSuchElementException:
-                        print("Whops! there are no more post to scrape")
+                        print(f'We have succeed scraping the target page: {fname}')
                         break       
 
 
