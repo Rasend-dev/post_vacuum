@@ -4,11 +4,12 @@ from datetime import datetime
 import json
 
 CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
+WDIR = os.getcwd()
 
 #Usefull methods
 class Um():
 
-    def create_csv(self,fname,path):
+    def _create_csv(self,fname,path):
         """
         Method that creates a csv file if not exits
         where path is path of the working directory | dtype is <str> | try using os.getcwd() to get the path
@@ -37,7 +38,7 @@ class Um():
             writer = csv.writer(outfile)
             writer.writerow(data) 
 
-    def create_json(self,fname,path):  
+    def _create_json(self,fname,path):  
         """
         Method that creates a json file if not exits
         where path is path of the working directory | dtype is <str> | try using os.getcwd() to get the path
@@ -65,4 +66,32 @@ class Um():
             data = json.load(f)
             data['post_details'].append(info)
             f.seek(0)
-            json.dump(data,f)
+            json.dump(data,f)  
+
+    def verify(self,name):
+        """
+        Method that verify if exits the data folder that will contain all the scraped data
+        where name is the name of the folder that will storage the data | dtype is <str>
+        """
+        directory  = os.listdir(WDIR)
+        if not name in directory:
+            os.mkdir(os.path.join(WDIR,name))
+        else:
+            pass    
+
+    def save_data(self,fname,directory):
+        """
+        Method that creates the data folder that will contain all the account scraped data
+        where fname is the folder name || dtype is <str>
+        and directory is the folder that will storage the data || dtype is <str> 
+        """
+        if not fname in os.listdir(directory):
+            account_folder = os.path.join(directory,fname)
+            os.mkdir(account_folder)
+            self._create_csv(fname,account_folder)
+            self._create_json(fname,account_folder)
+
+        else:
+            account_folder = os.path.join(directory,fname)
+            self._create_csv(fname,account_folder)
+            self._create_json(fname,account_folder)    
