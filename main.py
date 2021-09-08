@@ -13,6 +13,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 URL_LOGIN = 'https://www.instagram.com/accounts/login/'
 WDIR = os.getcwd()
+FOLDER_STORAGE = 'accounts_data'
+ACCOUNT_FOLDER = os.path.join(WDIR,FOLDER_STORAGE)
 
 class fuckInstagram():
 
@@ -22,7 +24,7 @@ class fuckInstagram():
         self.link = link
         self.driver = webdriver.Chrome(executable_path= 'chromedriver.exe')
 
-    def scrollDown(self,times,sec=1):
+    def _scrollDown(self,times,sec=1):
         """
         This is a simple method that allow us to scroll down the instagram page
         to load more posts
@@ -35,7 +37,7 @@ class fuckInstagram():
             driver.execute_script("window.scrollTo(0, window.scrollY + 770);")
             time.sleep(sec)
 
-    def getInfo(self,rows=3,state=0,fname=None):
+    def _getInfo(self,rows=3,state=0,fname=None):
         """
         This is a method that scrapes instagram most recent post where
         rows = is a vector that represent the current 3 posts to scrape
@@ -44,6 +46,7 @@ class fuckInstagram():
         """
         driver = self.driver
         useful = Um()
+        folder = os.path.join(ACCOUNT_FOLDER,fname)
         for i in range(rows):
             for y in range(3): 
                 try:
@@ -53,10 +56,9 @@ class fuckInstagram():
                     action.move_to_element(link).perform()
                     n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
                     n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
-                    useful.write_csv(fname,WDIR,[link.get_attribute('href'),n_likes,n_comments])
-                    useful.write_json(fname,WDIR,{'link':link.get_attribute('href'),'n_likes':n_likes,'n_comments':n_comments})
+                    useful.write_csv(fname,folder,[link.get_attribute('href'),n_likes,n_comments])
+                    useful.write_json(fname,folder,{'link':link.get_attribute('href'),'n_likes':n_likes,'n_comments':n_comments})
                 except NoSuchElementException:
-                    print(f'We have succeed scraping the target page: {fname}')
                     break
     
     def scrape(self):
@@ -103,16 +105,17 @@ class fuckInstagram():
             followers.append(info)
 
         #here we create the csv and the json files of the account itself
-        useful.create_csv(account_name,os.getcwd())
-        useful.create_json(account_name,os.getcwd())
+        useful.save_data(account_name,ACCOUNT_FOLDER)
 
         #execute the code
         print(followers)
-        self.getInfo(rows=10,fname=account_name)
-        self.scrollDown(1)
-        self.getInfo(rows=3,state=8,fname=account_name)
-        self.scrollDown(1)
-        self.getInfo(rows=2,state=9,fname=account_name)
+        self._getInfo(rows=10,fname=account_name)
+        self._scrollDown(1)
+        self._getInfo(rows=3,state=8,fname=account_name)
+        self._scrollDown(1)
+        self._getInfo(rows=2,state=9,fname=account_name)
+
+        print(f'We have succeed scraping the target page: {account_name}')
 
         driver.quit()
 
@@ -125,5 +128,7 @@ if __name__ == "__main__":
     args = arg.parse_args()
 
     if args.username and args.password and args.link:
+        useful = Um()
+        useful.verify(FOLDER_STORAGE)
         finstagram = fuckInstagram(args.username,args.password,args.link)
         finstagram.scrape()
