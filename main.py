@@ -53,11 +53,12 @@ class fuckInstagram():
                     # here we set up a action chain for the mouseover event
                     action = ActionChains(driver) #We have to initiate a new instance of ActionChains every time that we want to pass over the element without a restart
                     link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
+                    img = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]//img')
                     action.move_to_element(link).perform()
                     n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
                     n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
                     useful.write_csv(fname,folder,[link.get_attribute('href'),n_likes,n_comments])
-                    useful.write_json(fname,folder,{'link':link.get_attribute('href'),'n_likes':n_likes,'n_comments':n_comments})
+                    useful.write_json(fname,folder,{'link':link.get_attribute('href'),'image': img.get_attribute('src'),'n_likes':n_likes,'n_comments':n_comments})
                 except NoSuchElementException:
                     break
     
@@ -95,6 +96,7 @@ class fuckInstagram():
         #Go to the target link
         driver.get(self.link)
 
+        #get the name of the account for file saving
         account_name = driver.find_element_by_xpath('//main//section/div/h2').text 
 
         followers = []
