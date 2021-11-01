@@ -106,7 +106,7 @@ class fuckInstagram():
             info = driver.find_element_by_xpath(f'//header/section/ul/li[{i + 1}]//span').text
             followers.append(info)
 
-        #here we create the csv and the json files of the account itself
+        #here we create the folder for the account data
         useful.save_data(account_name,ACCOUNT_FOLDER)
 
         #execute the code

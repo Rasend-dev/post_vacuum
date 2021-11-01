@@ -85,7 +85,7 @@ class Um():
         where fname is the folder name || dtype is <str>
         and directory is the folder that will storage the data || dtype is <str> 
         """
-        if not fname in os.listdir(directory):
+        if not fname in os.listdir(directory): #if there is no folder with the name of the account
             account_folder = os.path.join(directory,fname)
             os.mkdir(account_folder)
             self._create_csv(fname,account_folder)
