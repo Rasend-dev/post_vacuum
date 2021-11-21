@@ -52,11 +52,11 @@ class fuckInstagram():
                 try:
                     # here we set up a action chain for the mouseover event
                     action = ActionChains(driver) #We have to initiate a new instance of ActionChains every time that we want to pass over the element without a restart
-                    link = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
-                    img = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]//img')
+                    link = driver.find_element(By.XPATH,f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a')
+                    img = driver.find_element(By.XPATH,f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]//img')
                     action.move_to_element(link).perform()
-                    n_likes = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
-                    n_comments = driver.find_element_by_xpath(f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
+                    n_likes = driver.find_element(By.XPATH,f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[1]/span[1]').text
+                    n_comments = driver.find_element(By.XPATH,f'//article//div[contains(@style,"flex-direction")]/div[{i + 1 + state}]/div[{y + 1}]/a/div[@class="qn-0x"]//li[2]/span[1]').text
                     useful.write_csv(fname,folder,[link.get_attribute('href'),n_likes,n_comments])
                     useful.write_json(fname,folder,{'link':link.get_attribute('href'),'image': img.get_attribute('src'),'n_likes':n_likes,'n_comments':n_comments})
                 except NoSuchElementException:
@@ -75,9 +75,9 @@ class fuckInstagram():
         WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//form[@id="loginForm"]//input[@name="username"]')))                              
 
         #Find the elements of forms
-        username = driver.find_element_by_xpath('//form[@id="loginForm"]//input[@name="username"]')
-        password = driver.find_element_by_xpath('//form[@id="loginForm"]//input[@name="password"]')
-        login_btn = driver.find_element_by_xpath('//form[@id="loginForm"]/div/div/button[@type="submit"]')
+        username = driver.find_element(By.XPATH,'//form[@id="loginForm"]//input[@name="username"]')
+        password = driver.find_element(By.XPATH,'//form[@id="loginForm"]//input[@name="password"]')
+        login_btn = driver.find_element(By.XPATH,'//form[@id="loginForm"]/div/div/button[@type="submit"]')
 
         #Account filling proccess
         username.click()
@@ -91,19 +91,19 @@ class fuckInstagram():
         login_btn.click()
             
         #Wait if the search bar exits
-        WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//nav//div/input[@placeholder="Search"]')))
+        WebDriverWait(driver,15).until(EC.presence_of_element_located((By.XPATH,'//nav//div/input')))
 
         #Go to the target link
         driver.get(self.link)
 
         #get the name of the account for file saving
-        account_name = driver.find_element_by_xpath('//main//section/div/h2').text 
+        account_name = driver.find_element(By.XPATH,'//main//section/div/h2').text 
 
         followers = []
 
         #Find the first data of the account
         for i in range(3):
-            info = driver.find_element_by_xpath(f'//header/section/ul/li[{i + 1}]//span').text
+            info = driver.find_element(By.XPATH,f'//header/section/ul/li[{i + 1}]//span').text
             followers.append(info)
 
         #here we create the folder for the account data
